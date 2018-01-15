@@ -74,13 +74,58 @@ void InsertSort(int arr[], int length)
   for (int i = 1; i < length; i++)
   {
     hold = arr[i];
-    j = i - 1;
-    while (j >= 0 && arr[j] > hold)
+    j = i;
+    while (j > 0 && arr[j - 1] > hold)
     {
-      arr[j + 1] = arr[j];
+      arr[j] = arr[j - 1];
       j--;
     }
-    arr[j + 1] = hold;
+    arr[j] = hold;
+  }
+}
+
+void Merge(int array[], int begin, int mid, int end)
+{
+  /*first part of the array*/
+  int p = begin;
+  int end1 = mid;
+  /*second part of the array*/
+  int q = mid + 1;
+  int end2 = end;
+
+  int i = 0;
+  int temp[end - begin];
+  /* store the sorted two parts*/
+  // foreach p < -begin1 to end1 and q < -begin2 to end2 if array[p] < array[q] copy array[p] to temp else copy array[q] to temp
+  while (p <= end1 && q <= end2)
+  {
+    if (array[p] < array[q])
+      temp[i++] = array[p++];
+    else
+      temp[i++] = array[q++];
+  }
+
+  /*deal with the last elements still left in the first or second part of array*/
+  while (p <= end1)
+    temp[i++] = array[p++];
+
+  while (q <= end2)
+    temp[i++] = array[q++];
+
+  // copy each element in temp to array,
+  // starting from index = low;
+  for (int j = begin; j <= end; j++)
+    array[j] = temp[j - begin];
+}
+
+void MergeSort(int array[], int begin, int end)
+{
+  if (begin < end)
+  {
+    int mid = (begin + end) / 2;
+    MergeSort(array, begin, mid);
+    MergeSort(array, mid + 1, end);
+    Merge(array, begin, mid, end);
   }
 }
 
@@ -94,11 +139,19 @@ int main()
   BubbleSort(arr1, length1);
   printArray(arr1, length1);
 
-  int arr2[] = {1, 5, 4, 3, 8, 2};
+  int arr2[] = {7, 6, 4, 3, 8, 2, 1, 5};
   int length2 = (int)(sizeof(arr2) / sizeof(arr2[0]));
   printf("Initial Array: ");
   printArray(arr2, length2);
   printf("After Insert sort: ");
   InsertSort(arr2, length2);
   printArray(arr2, length2);
+
+  int arr3[] = {11, 5, 4, 3, 8, 2, 7, 9};
+  int length3 = (int)(sizeof(arr3) / sizeof(arr3[0]));
+  printf("Initial Array: ");
+  printArray(arr3, length3);
+  printf("After Merge sort: ");
+  MergeSort(arr3, 0, length3 - 1);
+  printArray(arr3, length3);
 }
