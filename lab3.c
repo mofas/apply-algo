@@ -47,8 +47,9 @@ int randRange(int from, int to)
 int randomizedPartition(int array[], int p, int r)
 {
   int k = randRange(p, r);
+  // int k = r;
   swap(&array[k], &array[r]);
-  int x = array[r];
+  int x = array[r]; //pseudo code is WRONG!!!
   int i = p - 1;
   // printf("k=%d, x=%d, p=%d, i=%d\n", k, x, p, i);
   for (int j = p; j < r; j++)
@@ -91,7 +92,7 @@ int main()
   printf("After Quick sort: ");
   printArray(arr, length);
 
-  int bigArrLength = 1000;
+  int bigArrLength = 100000;
   int bigArr[bigArrLength];
   for (int i = 0; i < bigArrLength; i++)
   {
@@ -99,8 +100,8 @@ int main()
   }
 
   printf("Big Array: ");
-  printArray(bigArr, bigArrLength);
+  // printArray(bigArr, bigArrLength);
   randomizedQucikSort(bigArr, 0, bigArrLength - 1);
   printf("After Quick sort: ");
-  printArray(bigArr, bigArrLength);
+  // printArray(bigArr, bigArrLength);
 }
