@@ -22,8 +22,8 @@ void swap(int *a, int *b)
   *b = tmp;
 }
 
-int left(int i) { return 2 * i; }
-int right(int i) { return 2 * i + 1; }
+int left(int i) { return 2 * i + 1; }
+int right(int i) { return 2 * i + 2; }
 
 void float_down(int a[], int i, int length)
 {
@@ -56,9 +56,7 @@ void Heap_sort(int a[], int length)
 {
   build_max_heap(a, length);
 
-  // psuedo code is wrong again,
-  // index should go 0
-  for (int i = length - 1; i >= 0; i--)
+  for (int i = length - 1; i >= 1; i--)
   {
     swap(&a[0], &a[i]);
     //heap_size is i actually.
