@@ -89,6 +89,35 @@ In short, the total cost is small than 4n, and it is still O(n) operation averag
 
 # 6. What is the total cost of executing n of the stack operations PUSH, POP, and MULTIPOP, assuming that the stack begins with s0 objects and finishes with sn objects?
 
+In the lecture, we have cost 2 for PUSH, and 0 for POP and MULTIPOP,
+and we define the potential function be `φ(Sn)`, Where Sn is the number of elements.
+
+And we have two following equations.
+
+For PUSH
+
+```
+cost of operation + (φ(Sn) - φ(Sn-1)) = 2
+```
+
+For POP & MULTIPOP
+
+```
+cost of operation + (φ(Sn) - φ(Sn-1)) = 0
+```
+
+Therefore, for operation from S0 to Sn, we have the following equations.
+
+```
+Total cost of operation + S0 - Sn <= 2n
+```
+
+That is,
+
+```
+Total cost of operation <= 2n + Sn - S0
+```
+
 # 7. Illustrate the insertion of the keys 5, 28, 19, 15, 20, 33, 12, 17, 10 into a hash table with collisions resolved by chaining. Let the table has 9 slots, and let the hash function be h(k) = k mod 9.
 
 ```
