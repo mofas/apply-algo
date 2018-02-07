@@ -120,7 +120,7 @@ In other words, Total cost of operation <= `2n + Sn - S0`
 [8]
 
 [0]
-[1] 27
+[1] 28
 [2]
 [3]
 [4]
