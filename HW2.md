@@ -63,17 +63,13 @@ for (i <- 1 to (log2 n) - 1)
   sum <- sum + 2^i
 ```
 
-The total cost will be ~ `n + 2*n = 3*n`.
-That is O(n)
+The total cost will be small than `n + 2*n = 3*n`. That is O(n)
 
 # 4. A sequence of stack operations is performed on a stack whose size never exceeds k. After every k operations, a copy of the entire stack is made for backup purposes. Show that the cost of n stack operations, including copying the stack, is O(n) by assigning suitable amortized costs to the various stack operations.
 
-Stack has two operation, push and pop.
-Everytime we do those operations, we can do the same thing on another "backup" stack.
-After k operations, we can switch to another new "backup" stack.
+Everytime we do a operation, we can image we do the same thing on virtual "backup" stack, and after k operations, we will "actually" do those operations to create real new "backup" stack.
 
-Therefore, all operation double the cost from original one, so the total cost is `2*n`.
-However, the cost is still O(n). (Create new backup stack will be constant cost, and that cost is also O(n)).
+Therefore, we just only need to double the cost of all operation from original one, so the new total cost is `2*(cost of original operations)`. Because amortized cost of stack with operations POP and PUSH is O(n), the total cost will still be O(n) with backup mechanism. (Assume create new backup stack will be constant cost, and overall cost is still O(n)).
 
 # 5. Suppose we wish not only to increment a counter but also to reset it to zero (i.e., make all bits in it 0). Show how to implement a counter as an array of bits so that any sequence of increment or reset operations takes time O(n) on an initially zero counter.
 
@@ -85,7 +81,7 @@ we need to save 1 for future when we need to flip 1 to 0 in other increments.
 
 Now, we assume it will cost 4 for each increment at most, 2 is the same before; 1 for update `max_d` so we know how far we need to check to flip all digit to 0 when we reset; another 1 for fliping that digit to 0 in resetting operation. Those 2 cost happens only when `max_d` need to be updated. Therefore, we only need 1 cost when we reset the counter, that is for reseting the `max_d`. All other costs are covered by increment.
 
-In short, the total cost is small than 4n, and it is still O(n) operation average.
+In short, the total cost is small than 4n, and it is still O(n).
 
 # 6. What is the total cost of executing n of the stack operations PUSH, POP, and MULTIPOP, assuming that the stack begins with s0 objects and finishes with sn objects?
 
