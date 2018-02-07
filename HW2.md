@@ -77,6 +77,16 @@ However, the cost is still O(n). (Create new backup stack will be constant cost,
 
 # 5. Suppose we wish not only to increment a counter but also to reset it to zero (i.e., make all bits in it 0). Show how to implement a counter as an array of bits so that any sequence of increment or reset operations takes time O(n) on an initially zero counter.
 
+We will need to introduce another fields `max_d` in memory to store the max digits of counter.
+When we execute increment, we need to update the `max_d`.
+
+Originally, we assume it cost 2 for each increment, since when we flip 0 to 1 which cost 1,
+we need to save 1 for future when we need to flip 1 to 0 in other increments.
+
+Now, we assume it will cost 4 for each increment at most, 2 is the same before; 1 for update `max_d` so we know how far we need to check to flip all digit to 0 when we reset; another 1 for fliping that digit to 0 in resetting operation. Those 2 cost happens only when `max_d` need to be updated. Therefore, we only need 1 cost when we reset the counter, that is for reseting the `max_d`. All other costs are covered by increment.
+
+In short, the total cost is small than 4n, and it is still O(n) operation average.
+
 # 6. What is the total cost of executing n of the stack operations PUSH, POP, and MULTIPOP, assuming that the stack begins with s0 objects and finishes with sn objects?
 
 # 7. Illustrate the insertion of the keys 5, 28, 19, 15, 20, 33, 12, 17, 10 into a hash table with collisions resolved by chaining. Let the table has 9 slots, and let the hash function be h(k) = k mod 9.
