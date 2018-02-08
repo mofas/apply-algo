@@ -63,7 +63,7 @@ for (i <- 1 to (log2 n) - 1)
   sum <- sum + 2^i
 ```
 
-The total cost will be small than `n + 2*n = 3*n`. That is O(n)
+The total cost will be small than `n + 2*n = 3*n`. That is O(n) for total cost, and O(1) amortized cost per operation.
 
 #### 4. A sequence of stack operations is performed on a stack whose size never exceeds k. After every k operations, a copy of the entire stack is made for backup purposes. Show that the cost of n stack operations, including copying the stack, is O(n) by assigning suitable amortized costs to the various stack operations.
 
