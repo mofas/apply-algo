@@ -80,12 +80,80 @@ Accordingly, We can get formula that `P(1, 1) = 0.5 + 0.5*P(1, 2)`.
 We can use induction to get general relation `P(1, y) = 0.5 + 0.5*P(1, y+1)`.
 Due to the rule of symmetry, we also know that P(2, 1) is also equal to `0.5 + 0.5*P(1, 1)` as well.
 
-In fact, we can get the overall recursion function that.
-`P(x, y) = 0.5*P(x-1, y) + 0.5*P(x, y-1)` and `P(1, 1) = 0.5`.
+In fact, we can get the overall recursion function,
+
+1. `P(x, y) = 0.5*P(x-1, y) + 0.5*P(x, y-1)`
+
+2. `P(1, 1) = 0.5`.
 
 Or we can replace the parameter back to get
-`P(n-i, n-j) = 0.5*P(n-i+1, n-j) + 0.5*P(n-i, n-j+1)` and `P(n-1, n-1) = 0.5`.
 
-Then we can use dynamic programming to solve this recursion.
+1. `P(n-i, n-j) = 0.5*P(n-i+1, n-j) + 0.5*P(n-i, n-j+1)`
+
+2. `P(n-1, n-1) = 0.5`.
 
 #### 5. Give an O(nt) algorithm for the following task. Input: a list of n positive integers a1, a2, ..., an; a positive integer t.Question: does some subset of the ai’s add up to t?
+
+The recursion function is
+
+1. `F(t, Set) = F(t-a1, Set/a1) || F(t-a2, Set/a2) || F(t-a3, Set/a3) ... || F(t-an, Set/an)` for all ai ∈ Set and `ai < t`.
+
+2. `F(t, φ) = false`.
+
+3. `F(0, Set) = true`.
+
+`Set/a1` mean remove a1 element from Set.
+
+F(t-ai, Set) will be computed for all ai ∈ Set, and therefore is `O(n)`.
+
+We need to repeat such recursion until we hit `F(0, Set)` or `F(t, φ)`.
+And the worst case is repeat t times, so the overall time complexity is `O(n*t)`.
+
+#### 6. Professor Midas drives an automobile from Newark to Reno along Interstate 80. His car's gas tank, when full, holds enough gas to travel n miles, and his map gives the distances between gas stations on his route. The professor wishes to make as few gas stops as possible along the way. Give an efficient method by which Professor Midas can determine at which gas stations he should stop, and prove that your strategy yields an optimal solution.
+
+Assume the route start from x0(Newark), and end at xn(Reno), and n gas stations are located in x1, x2, x3 .... xn, where xi is between x0 and xn.
+
+We can draw the picture like following.
+
+```
+x0 ---- x1 -- x2 ---- x3 --- x4 - ... --- xn-1 -- xn
+```
+
+Now we can define the dynamic recursion:
+
+```
+S(D) = min { S(xi)+1 } for all xi < D, and (D - xi) <= n
+
+for D < n, we can choose not to stop at any gas stations.
+S(D) = min { S(xi)+1, 0 } for all xi < D, and (D - xi) <= n, and D < n
+```
+
+For example:
+
+```
+x0 = 0, x1 = 4, x2 = 7, x3 = 9, x4 = 11, x5 = 14, x6 = 17, x7 = 19
+n = 8, D is 20
+
+S(20) = min { S(19)+1, S(17)+1, S(14)+1 }
+S(19) = min { S(14)+1, S(11)+1 }
+S(17) = min { S(14)+1, S(11)+1, S(9)+1 }
+S(14) = min { S(11)+1, S(9)+1, S(7)+1 }
+S(11) = min { S(9)+1, S(7)+1, S(4)+1 }
+S(9) = min { S(7)+1, S(4)+1 }
+S(7) = min { S(4)+1, 0 }
+S(4) = min { 0 }
+```
+
+We can proof we get the optimal solution by induction.
+Let XS = x1, x2, x3 ..., xk be the final stops.
+
+Let OS(k) is the set of optimal solution for travel from x0 to xi for all i < k.
+
+Base case: if k = 1, we know 0 is the solution for this problem, and 0 is the optimal solution because no other solution better than 0.
+
+Induction step:
+Assume we get the OS(j) for j < k, we need to proof we can find the optimal solution for OS(k) through this algorithm.
+
+Because we check all the gas station that can be reached by xk in distance n, say they are xi, xi+1, ... xk-1, and we have the optimal solution for OS(xi), OS(xi+1) .... OS(xk-1), we know we can get all possible optimal solution for reaching xk.
+
+In algorithm, we choose the optimal solution among those subproblem, so we can garantee we get the optimal solution for xk.
