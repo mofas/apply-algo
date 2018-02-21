@@ -49,7 +49,7 @@
 
 #### 2. Suppose that the search for the key kin a binary search tree ends up in a leaf. Consider three sets: 1) the keys to the left of the search path; 2) the keys on the search path; 3) the keys to the right of the search path. One claims that any three keys a, b and c from these three sets, respectively (say a from 1, b from 2 and c from 3), it is always true that a ≤ b ≤ c. Is this claim true? Explain your answer.
 
-No. Consider we serach for 3 in the following tree. Then a ∈ { 1 }, b ∈ { 2, 3, 4, 6 }, c ∈ { 5 }
+No. Consider we serach for 3 in the following tree. Then a in {1}, b in {2, 3, 4, 6}, c in {5}
 It is clear we can pick a = 1, b = 6 and c = 5 which violate a ≤ b ≤ c.
 
 ```
@@ -102,16 +102,16 @@ The recursion function is
 
 3. `F(0, Set) = true`.
 
-`Set/a1` mean remove a1 element from Set.
+(`Set/a1` mean remove a1 element from Set.)
 
-F(t-ai, Set) will be computed for all ai ∈ Set, and therefore is `O(n)`.
+`F(t-ai, Set)` will be computed for all ai in Set, and therefore is `O(n)`.
 
-We need to repeat such recursion until we hit `F(0, Set)` or `F(t, φ)`.
+We repeat such recursion until we hit `F(0, Set)` or `F(t, φ)`.
 And the worst case is repeat t times, so the overall time complexity is `O(n*t)`.
 
 #### 6. Professor Midas drives an automobile from Newark to Reno along Interstate 80. His car's gas tank, when full, holds enough gas to travel n miles, and his map gives the distances between gas stations on his route. The professor wishes to make as few gas stops as possible along the way. Give an efficient method by which Professor Midas can determine at which gas stations he should stop, and prove that your strategy yields an optimal solution.
 
-Assume the route start from x0(Newark), and end at xn(Reno), and n gas stations are located in x1, x2, x3 .... xn, where xi is between x0 and xn.
+Assume the route start from x0(Newark), and end at xn(Reno), and i gas stations are located in x1, x2, x3 .... xi, where xi is between x0 and xn.
 
 We can draw the picture like following.
 
@@ -122,11 +122,14 @@ x0 ---- x1 -- x2 ---- x3 --- x4 - ... --- xn-1 -- xn
 Now we can define the dynamic recursion:
 
 ```
-S(D) = min { S(xi)+1 } for all xi < D, and (D - xi) <= n
-
-for D < n, we can choose not to stop at any gas stations.
-S(D) = min { S(xi)+1, 0 } for all xi < D, and (D - xi) <= n, and D < n
+if D < n
+  S(D) = min { S(xi)+1, 0 } for all xi < D, and (D - xi) <= n
+else
+  S(D) = min { S(xi)+1 } for all xi < D, and (D - xi) <= n
 ```
+
+D is the target place, and S is the number of stops we get to place D.
+For `D < n` we can choose not to stop at any gas stations, and arrival D.
 
 For example:
 
@@ -145,15 +148,16 @@ S(4) = min { 0 }
 ```
 
 We can proof we get the optimal solution by induction.
-Let XS = x1, x2, x3 ..., xk be the final stops.
+Let OS(k) is the set of optimal solution for travel from x0 to xi for all 1 < i < k,
+and O(k) is the optimal solution for travel to xk.
 
-Let OS(k) is the set of optimal solution for travel from x0 to xi for all i < k.
+`OS(1) = {O(1)}` and `OS(4) = {O(1), O(2), O(3), O(4)}`
 
-Base case: if k = 1, we know 0 is the solution for this problem, and 0 is the optimal solution because no other solution better than 0.
+Base case: if k = 1, OS(1) = O(1) we know 0 is the solution for this problem.
 
 Induction step:
 Assume we get the OS(j) for j < k, we need to proof we can find the optimal solution for OS(k) through this algorithm.
 
-Because we check all the gas station that can be reached by xk in distance n, say they are xi, xi+1, ... xk-1, and we have the optimal solution for OS(xi), OS(xi+1) .... OS(xk-1), we know we can get all possible optimal solution for reaching xk.
+Because we check all the gas station that can be reached by xk in distance n, say they are xi, xi+1, ... xk-1, and we have the optimal solution for O(i), O(i+1) .... O(k-1), we know we can get all possible optimal solution for reaching xk.
 
-In algorithm, we choose the optimal solution among those subproblem, so we can garantee we get the optimal solution for xk.
+In algorithm, we choose the optimal solution among those subproblem, so we can garantee we get the optimal solution for xk. That is O(k), and OS(k) = OS(k-1) U { O(k) }.
