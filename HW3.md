@@ -111,53 +111,62 @@ And the worst case is repeat t times, so the overall time complexity is `O(n*t)`
 
 #### 6. Professor Midas drives an automobile from Newark to Reno along Interstate 80. His car's gas tank, when full, holds enough gas to travel n miles, and his map gives the distances between gas stations on his route. The professor wishes to make as few gas stops as possible along the way. Give an efficient method by which Professor Midas can determine at which gas stations he should stop, and prove that your strategy yields an optimal solution.
 
-Assume the route start from x0(Newark), and end at xn(Reno), and i gas stations are located in x1, x2, x3 .... xi, where xi is between x0 and xn.
+This problem can be solved by greedy algorithm or dynamic programming. I use dynamic programming to solve it.
+
+Assume the route start from x0(Newark), and end at xk(Reno), and i gas stations are located in x1, x2, x3 .... xi, where xi is between x0 and xk.
 
 We can draw the picture like following.
 
 ```
-x0 ---- x1 -- x2 ---- x3 --- x4 - ... --- xn-1 -- xn
+x0 ---- x1 -- x2 ---- x3 --- x4 - ... --- xk-1 -- xk
 ```
 
-Now we can define the dynamic recursion:
+Now we can define the recursion function S(xi):
 
 ```
-if D < n
-  S(D) = min { S(xi)+1, 0 } for all xi < D, and (D - xi) <= n
+if D(xi) < n
+  S(xi) = 0
 else
-  S(D) = min { S(xi)+1 } for all xi < D, and (D - xi) <= n
+  S(xi) = min { S(xi)+1 } for all j < i, and (D(xj) - D(xi)) <= n
 ```
 
-D is the target place, and S is the number of stops we get to place D.
-For `D < n` we can choose not to stop at any gas stations, and arrival D.
+D is the distance between xi and x0, and S(xi) is the number of stops we have to get to place xi.
+For `D(xi) < n` we can choose not to stop at any gas stations to arrival D.
 
 For example:
 
 ```
-x0 = 0, x1 = 4, x2 = 7, x3 = 9, x4 = 11, x5 = 14, x6 = 17, x7 = 19
-n = 8, D is 20
+k = 7, n = 8
+D(x0) = 0, D(x1) = 4, D(x2) = 7, D(x3) = 9, D(x4) = 11, D(x5) = 14, D(x6) = 17, D(x7) = 19
 
-S(20) = min { S(19)+1, S(17)+1, S(14)+1 }
-S(19) = min { S(14)+1, S(11)+1 }
-S(17) = min { S(14)+1, S(11)+1, S(9)+1 }
-S(14) = min { S(11)+1, S(9)+1, S(7)+1 }
-S(11) = min { S(9)+1, S(7)+1, S(4)+1 }
-S(9) = min { S(7)+1, S(4)+1 }
-S(7) = min { S(4)+1, 0 }
-S(4) = min { 0 }
+S(x7) = min { S(x5)+1, S(x4)+1 }
+S(x6) = min { S(x5)+1, S(x4)+1, S(x3)+1 }
+S(x5) = min { S(x4)+1, S(x3)+1, S(x2)+1 }
+S(11) = min { S(x3)+1, S(x2)+1, S(x1)+1 }
+S(x3) = min { S(x2)+1, S(x1)+1 }
+S(x2) = 0
+S(x1) = 0
 ```
 
 We can proof we get the optimal solution by induction.
-Let OS(k) is the set of optimal solution for travel from x0 to xi for all 1 < i < k,
-and O(k) is the optimal solution for travel to xk.
+
+Let OS(k) is the set of optimal solution for traveling from x0 to xi for all 1 < i < k,
+and O(k) is the optimal solution for traveling to xk.
+
+For example,
 
 `OS(1) = {O(1)}` and `OS(4) = {O(1), O(2), O(3), O(4)}`
 
-Base case: if k = 1, OS(1) = O(1) we know 0 is the solution for this problem.
+For proof by induction, we need the base case and step case,
+
+base case: if k = 1, OS(1) = O(1) we know 0 is the solution for this problem. Otherwise, we have no way to leave x0 because x1 is the cloest gas station to x0.
 
 Induction step:
-Assume we get the OS(j) for j < k, we need to proof we can find the optimal solution for OS(k) through this algorithm.
 
-Because we check all the gas station that can be reached by xk in distance n, say they are xi, xi+1, ... xk-1, and we have the optimal solution for O(i), O(i+1) .... O(k-1), we know we can get all possible optimal solution for reaching xk.
+Assume we get the OS(k-1), we need to proof we can calculate OS(k) through this algorithm.
 
-In algorithm, we choose the optimal solution among those subproblem, so we can garantee we get the optimal solution for xk. That is O(k), and OS(k) = OS(k-1) U { O(k) }.
+Since we check all the gas station that can be reached by xk in distance n, say they are `xi, xi+1, ... xk-1`, and we already have the optimal solutions for them, which is `O(i), O(i+1) .... O(k-1)`, we know we can get solution for reaching xk through `xi xi+1 ... xk-1`.
+
+Hence, we choose the minium value among those subproblems, and we are garanteed to get the optimal solution for xk. That is O(k).
+
+Finally, we can get OS(k) by OS(k-1) U { O(k) }. Finish the proof.
