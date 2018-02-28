@@ -1,7 +1,8 @@
 #include <stdio.h>
-#include <string.h>
 #include <math.h>
+#include <iostream>
 #include <queue>
+#include <string>
 
 using namespace std;
 
@@ -15,11 +16,56 @@ typedef struct node_struct
 
 struct NodeCompare
 {
-  bool operator()(const Node &n1, const Node &n2) const
+  bool operator()(Node *n1, Node *n2) const
   {
-    return n1.freq > n2.freq;
+    return n1->freq > n2->freq;
   }
 };
+
+void printTree(Node *root, string code)
+{
+  if (!root)
+    return;
+
+  if (root->symbol != '_')
+    cout << root->symbol << ":" << code << endl;
+
+  printTree(root->left, code + "0");
+  printTree(root->right, code + "1");
+}
+
+Node *huffman(Node c[], int n)
+{
+  priority_queue<Node *, vector<Node *>, NodeCompare> PQ;
+
+  for (int i = 0; i < n; ++i)
+  {
+    PQ.push(&c[i]);
+  }
+
+  for (int i = 0; i < n - 1; ++i)
+  {
+    Node *z = new Node;
+
+    Node *x, *y;
+    x = PQ.top();
+    PQ.pop();
+    y = PQ.top();
+    PQ.pop();
+    (*z).symbol = '_';
+    z->freq = x->freq + y->freq;
+    z->left = x;
+    z->right = y;
+
+    printf("Insert %c == %c %c : %d \n", z->symbol, x->symbol, y->symbol, z->freq);
+    PQ.push(z);
+  }
+
+  Node *ret = PQ.top();
+  PQ.pop();
+
+  return ret;
+}
 
 int main()
 {
@@ -32,18 +78,8 @@ int main()
       {'e', 9, NULL, NULL},
       {'f', 5, NULL, NULL}};
 
-  priority_queue<Node, vector<Node>, NodeCompare> PQ;
+  Node *root = huffman(nodeList, 6);
+  printTree(root, "");
 
-  for (int i = 0; i < n; ++i)
-    PQ.push(nodeList[i]);
-
-  for (int i = 0; i < n; ++i)
-  {
-    Node t;
-    t = PQ.top(); // Getting the min item, the item still stays in the Queue
-    PQ.pop();     // Popping out this item
-
-    printf("%c %d\n", t.symbol, t.freq);
-  }
   return 0;
 }
