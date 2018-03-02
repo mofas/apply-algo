@@ -28,7 +28,7 @@ void printTree(Node *root, string code)
     return;
 
   if (root->symbol != '_')
-    cout << root->symbol << ":" << code << endl;
+    printf("%c : %s\n", root->symbol, code.c_str());
 
   printTree(root->left, code + "0");
   printTree(root->right, code + "1");
@@ -57,7 +57,7 @@ Node *huffman(Node c[], int n)
     z->left = x;
     z->right = y;
 
-    printf("Insert %c == %c %c : %d \n", z->symbol, x->symbol, y->symbol, z->freq);
+    printf("Insert %c %c : %d \n", z->symbol, x->symbol, y->symbol, z->freq);
     PQ.push(z);
   }
 
