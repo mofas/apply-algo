@@ -15,23 +15,47 @@ However, max { SP , SN } is always the same, so we only compute SP, SN once, and
 
 #### 7. Given two sorted arrays, each containing n integers, A[1..n] and B[1..n], and an integer N, we want to find two numbers a and b in each of these input arrays, respectively, a∈A and b∈B, such that |a-b|=N; if there are no such two numbers, a message “not found” should be output. Here, we want to avoid any additional storage with the size O(n). Devise an algorithm to find the two numbers in O(n) time under this constraint. (Note that you can still use additional constant memory as temporary storage.)
 
-========= TODO ===========
-
-Let f(A , B, N) be the function search such number, and assume the length of A is n and length of B is m.
-
-We copare the mid of A midA and mid of B midB.
-
-if midA - midB > N, then we recursively search f(A[1..n/2] , B[1...n], N) and f(A[1..n] , B[m/2..m] , N)
-else if 0 < midA - midB < N, then we recursively search f(A[n/2..n] , B[1...m], N) and f(A[1..n] , B[1..m/2] , N)
-else if midB - midA > N, then we recursively search f(A[1..n] , B[1..m/2] , N) and f(A[n/2..n] , B[1..m] , N)
-else if 0 < midB - midA < N, then we recursively search f(A[1..n/2] , B[1...m] , N) and f(A[1..n] , B[m/2..m] , N)
-
-For n = 1 and m = 1, if | A[1] - B[1] | = N, then we find it.
+We need to extra memory for index i and j to record current position in array A and B.
 
 ```
-[1, 2, 3, 4, 5][2, 3, 4, 15, 16]
+i <- 1
+j <- 1
 
-| A - B | = 3
+f(A, B):
+  while (diff > 0 && i < n && j < n)
+    if ( B[i] - A[j] == N )
+      return [B[i], A[j]]
+    else if ( B[i] - A[j] < N )
+      j++
+    else
+      i++
+
+f(A, B)
+// we switch A B and run it again
+f(B, A)
+```
+
+Eg:
+
+```
+A: [2, 3, 4, 5]
+B: [2, 3, 4, 9, 10]
+N = 3
+
+
+i=1, j=1, B[i] - A[j] = 0 < 3
+i=1, j=2, B[i] - A[j] = 1 < 3
+i=1, j=3, B[i] - A[j] = 2 < 3
+i=1, j=4, B[i] - A[j] = 7 > 3
+i=2, j=4, B[i] - A[j] = 6 > 3
+i=3, j=4, B[i] - A[j] = 5 > 3
+i=4, j=4, B[i] - A[j] = 4 > 3
+
+// switch A B
+i=1 j=1, A[i] - B[j] = 0 < 3
+i=1 j=2, A[i] - B[j] = 1 < 3
+i=1 j=3, A[i] - B[j] = 2 < 3
+i=1 j=4, A[i] - B[j] = 3 == 3 return [5, 2]
 ```
 
 #### 8. Given an array of n positive integers and an integer N, we want to find if it has a consecutive subarray (i.e., a subarray with consecutive elements between a two positions) with the sum of N. Devise an O(n) algorithm to solve this problem.
@@ -207,14 +231,125 @@ If we delete 29 from the node, we also need to decrease the children count of no
 (11, 0)         (16, 0)      (24, 0)            (31, 0)
 ```
 
-With such data structure, we now can define the function f to calculate the number bigger than k at the root of tree T
+With such data structure, we now define the function f to calculate the number bigger than k at the root of tree T
 
 ```
 f(T, k)
-  if root[T]  > k
-    return f(left[T], k) + childrenCount[right[T]]
+  if root[T] > k
+    if right[T] != Nil
+      f(left[T], k) + childrenCount[right[T]] + 2
+    else
+      f(left[T], k) + 1
   else
-    f(right[T], k)
+    if right[T] != Nil
+      f(right[T], k)
+    else
+      0
 ```
 
-Eg:
+Eg: We want to find the answer on above tree with k = 13.
+
+At root f(20, 13), 13 < 20, so we go left. However, we need to add the children count of the right branch.
+
+```
+f(14, 13) + 3 + 2
+```
+
+Now 13 < 14, we go left again, and add right branch node count.
+
+```
+f(11, 13) + 0 + 2 + (3 + 2)
+```
+
+Now 13 > 11 and right branch is NIL, so we stop here and return 0.
+
+```
+0 + (0 + 2) + (3 + 2)
+```
+
+The answer is 7.
+
+Eg2: We want to find the answer on above tree with k = 29.
+
+At root f(20, 29), 29 > 20, so we go right.
+
+```
+f(28, 29)
+```
+
+Now 29 > 28, we go right again.
+
+```
+f(31, 29)
+```
+
+Now 29 < 31, so we go left. Besides, right branch is empty so we only need to add 1
+
+```
+f(29, 29) + 1
+```
+
+now 29 <= 29, so we need to go right, but it is Nil. Therefore we stop here.
+
+```
+0 + 1
+```
+
+The answer is 1.
+
+Every step we go 1 layer deep, so the time complexity is O(h).
+
+#### 13. Given two set of elements, A with m elements and B with n elements (n ≥ m), devise an algorithm to check if A is a subset of B. Note that you can only compare the elements to tell if they are the same or not. What is the run time of your algorithm in big-O notation?
+
+```
+isSubset(A, B)
+  for element a in A
+    if not existedInSet(a, B)
+      return false
+
+  return true
+```
+
+```
+existedInSet(a , B)
+  for element b in B
+    if a == b
+    return true
+  return false
+```
+
+isSubset run m times, and existedInSet is O(n)
+The time complexity is O(nm).
+
+#### 14. You want to schedule a subset of n given jobs on a resource. Each job i needs to run on the resource for ti hours, and has a benefit of bi. You cannot schedule more than one job on the resource at a time. Devise an algorithm to schedule the subset of the jobs on the resource for a total of N hours (N is given in addition to ti and bi).
+
+Originally, I think we can sort jobs by bi/ti, and using greedy algorithm to solve it.
+
+```
+  f(N, jobs) :
+    for ji in jobs which ti < N
+      choose highest bi/ti  ji ∪ f(N-ti, jobs / ji)
+```
+
+However, this problem cannot solve by greedy algorithm because we have time limit.
+
+For example:
+
+```
+Job 1: t1: 8, b1: 16  b1/t1 = 2
+Job 2: t2: 6, b2: 11  b2/t2 = 1.83
+Job 3: t3: 4, b3: 7   b3/t3 = 1.75
+N = 10
+```
+
+Choosing job 2 + job 3 is better than just allocate job 1.
+
+We need to solve this problem by dynamic programming.
+
+```
+f(N, jobs):
+  let ji in jobs which ti < N
+  max { f(N-ti, jobs / ji) , f(N, jobs / ji) }
+```
+
+#### 15. Alice wants to organize a party and is deciding whom to call. She has n people to choose from, and she has made up a list of which pairs of these people know each other. She wants to pick as many people as possible, subject to two constraints: at the party, each person should have at least five other people whom they know and five people whom they don’t know. Given as input the list of n people and the list of pairs who know each other, devise an algorithm to output the best choice of party invitees.
