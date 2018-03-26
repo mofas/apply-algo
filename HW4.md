@@ -172,9 +172,7 @@ for(i = 2 ; i < length(A); i++){
 #### 11. The overlap between two intervals i and i' is defined as: if i ∩ i' ≠ ø, that is, if low[i] ≤ low[i'], overlap = max(0, high[i] - low[i’]); if low[i’] ≤ low[i], overlap = max(0, high[i’] - low[i]). Given a set of intervals S and a query interval q, we want to find the interval in S with the greatest overlap with q. Devise a data structure based on binary search tree (BST) to maintain the interval set S (so that they can be inserte/delected, etc), and a search algorithm using the data structure to solve the above problem in O(log n), where n = |S|. You may modify the BST data structure to incorporate additional auxiliary information.
 
 =========== TODO ============
-We sort intervals by low of interval, and we also store the max highest in the node for searching just we do as normal interval tree in textbook. We need to keep those two information for us to search overlay.
-
-In addition, we also need to store the min
+We sort intervals by low of interval, and we need to store the max of left branch and min of right branch.
 
 Eg
 
@@ -192,7 +190,7 @@ Eg
   [26, 26]
 ]
 
-target : [8, 18]
+q : [8, 18]
 
 goal: [15, 23]
 ```
@@ -353,3 +351,29 @@ f(N, jobs):
 ```
 
 #### 15. Alice wants to organize a party and is deciding whom to call. She has n people to choose from, and she has made up a list of which pairs of these people know each other. She wants to pick as many people as possible, subject to two constraints: at the party, each person should have at least five other people whom they know and five people whom they don’t know. Given as input the list of n people and the list of pairs who know each other, devise an algorithm to output the best choice of party invitees.
+
+We define S be the set of people {p1, p2, p3, ... pi} that we want to invite.
+
+Function K(S, pi) is the number of people the people pi in S knows.
+Function N(S, pi) is the number of people the people pi in S doesn't know.
+
+We start from inviting all the people, that is S = {p1, p2, ... pn}
+
+```
+f(S) :
+  if existed pi in S st ( K(S, pi) < 5 || N(S, pi) < 5 )
+    return max { for pi which ( K(S, pi) < 5 || N(S, pi) < 5 ) f(S/pi) }
+  else
+    return S
+```
+
+The algorithm is quite straightforward, we invite all people at first. If someone don't fit the constraints, then we kick him/her from invitation list. If there are several people don't qualify those two constraints, than we use recursively check which set that remove pi is the biggest one.
+
+#### 16. Consider the following variation on the Scheduling Problem. You have a processor that can operate 24 hours a day, every day. People submit requests to run daily jobs on the processor. Each such job comes with a start time and an end time; if the job is accepted to run on the processor, it must run continuously, every day, for the period between its start and end times. Given a list of n such jobs, your goal is to accept as many jobs as possible (regardless of their length), subject to the constraint that the processor can run at most one job at any given point in time. Provide an algorithm to do this with a running time that is polynomial in n. You may assume for simplicity that no two jobs have the same start or end times.
+
+#### Example. Consider the following four jobs, specified by (start time, end-time) pairs. (6 P.M., 6 A.M.), (9 P.M., 4 A.M.), (3 A.M., 2 P.M.), (1 P.M., 7 P.M.). The optimal solution would be to pick the two jobs (9 P.M., 4 A.M.) and (1P.M., 7 P.M.), which can be scheduled without overlapping
+
+========= TODO ==========
+
+Calculate the number of overlap with other jobs for each job.
+Sort jobs by the number of overlap ascendingly.
