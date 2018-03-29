@@ -1,3 +1,73 @@
+#### 1. Given an undirected graph G and a particular edge e in it, devise a lineartime algorithm O(m+n) that determines whether G has a cycle containing e.
+
+Assume edge e is (u, v).
+
+At first, we remove the edge from the graph G, and use DFS search to see if v can visited from u, which take O(m+n) times.
+
+```
+Explore(G, u, target):
+  if u = target
+    hasCycle <- true
+  visited(u) <- 1
+  for each edge (u, v) ∈ E
+    if visited(u) = 0
+      explore(G, u)
+
+DFSSearch(G, u, target):
+  for u ∈ G
+    visited(u) <- 0
+  explore (G, u, target)
+
+DFSSearch(G', u, v) where (u, v) is e, and G' is G removing edge e.
+```
+
+#### 2. Consider the following statement: if (u,v) is an edge in an undirected graph, and during the depth-first search post(u) < post(v), then v must be an ancestor of u in the DFS tree. Is this statement true or false? If it is true, prove it; otherwise, give a counterexample.
+
+Yes.
+
+We can categories the possibilities to four situations.
+
+1.  Visting u first and then v through edge(u, v)
+2.  Visiting u first and other nodes, then go u without traversing edge(u, v)
+3.  Visiting v first and then u through edge(u, v)
+4.  Visiting v first and other nodes, then go u without traversing edge(u, v)
+
+For first case, if we visit v after u immediately through edge (u, v), then post(u) > post(v) because we will back from u after finishing exploreing u. We don't need to handle this case.
+
+For second case, if we visit v after u without traversing edge(u, v). then by induction on first case, post(u) > post(x1) > post(x2) .... > post(v). We can get post(u) > post(v). We don't need to handle this case either.
+
+For third case, if we visit u after v immediately through edge (u, v), then post(v) > post(u) and clearly u is the ancestor of v.
+
+For fourth case, if we visit u after v without traversing edge(u, v). then by induction on third case, we can get post(v) > post(x1) > post(x2) .... > post(u), and v is ancestor of x1, x1 is ancestor of x2 ..., and xn is ancestor of u. Therefore, we can get conclusion that v is ancestor of u.
+
+#### 3. The police department in the city of Axeville has made all streets oneway. The mayor contends that there is still a way to drive legally from any intersection in the city to any other intersection, but the opposition is not convinced. (1) Formulate a graph algorithmic problem to check whether this statement is true or not, and devise a linear time algorithm to solve it; (2) Suppose it turns out the mayor’s claim is false. She next claims something weaker: if you start driving from the town hall, then no matter where you reach, there is always a way to drive legally back to the town hall. Formulate this weaker statement, and devise a linear time algorithm to check if it is true or not.
+
+The first problem is essential the problem to prove the whole city is a single strongly connected component.
+
+We define a intersection is a vertex v and if there is a way to go from one intersection u to another intersection v then we have a edge (u, v). The we can model the whole city as a graph graph G(V, E).
+
+To proof the whole city is a single SCC, we can runn DFS algorithm twice. First DFS find the sink of the graph. The second DFS start from sink in reversed graph. If second time we still can reach all the vertex in graph, then we can proof it is a single SCC.
+
+In the second problem, we still use the same graph model as the first problem. This time, we firstly use DFS start from the town hall, and remove all intersections that is not reachable from this search. Then we check if such graph is a single SCC by reversed graph and running DFS again.
+
+Both problem can be solved by two DFS, and DFS is a linear time algorithm. Therefore, both of them is also O(n)
+
+#### 4. Devise a linear O(m+n) time to solve the following problem: given a directed acyclic graph G (with n vertices and m edges), check if G has a directed path that visits every vertex once and only once.
+
+This is a Hamiltonian path problem.
+
+Firstly, Using DFS to sort all vertices in topological order, which takes time O(m+n).
+
+Then we check if all successive vertices in the sort are connected. That is, we have edges (1, 2), (2, 3) (3, 4) ... (n-1, n), where the number is verticts sorted in topological order. If so, then we get a Hamiltonian path, which starting from the source, traversing all vertices in topological order and ending at the sink. This operation take O(n) times.
+
+The running time is O(m+n) + O(n)
+
+#### 5. A feedback edge set of an undirected graph G=(V, E) is a subset of edges E’⊆E that intersects every cycle of the graph. Thus, removing the edges in E’ will render the graph acyclic. Give an efficient algorithm for the following problem: Input: Undirected graph G=(V, E) with positive edge weights We Output: A feedback edge set E’⊆E of minimum total weight Σ e∈E’ We
+
+TODO ....
+
+This problem can be solved by greeding algorithm.
+
 #### 6. Given two arrays of n integers, the all-pair-sum S is defined as the sum of every pair of elements: S = Σi,jaibj, where ai and bj are the integers in the two respective arrays. Given an array of n integers A, we want to find an array of integers B, in which each element bj ∈ {1, -1}, such that the all-pair-sum between A and B is maximized. How to find array B?
 
 Let the f(j) be the max sum of array A and the array B with first j element.
@@ -373,7 +443,28 @@ The algorithm is quite straightforward, we invite all people at first. If someon
 
 #### Example. Consider the following four jobs, specified by (start time, end-time) pairs. (6 P.M., 6 A.M.), (9 P.M., 4 A.M.), (3 A.M., 2 P.M.), (1 P.M., 7 P.M.). The optimal solution would be to pick the two jobs (9 P.M., 4 A.M.) and (1P.M., 7 P.M.), which can be scheduled without overlapping
 
-========= TODO ==========
+Firstly, we change the time format to 24 hours foramt. If a jobs cross 12 AM, such as (9 P.M., 4 A.M.) we take them as(21, 28), and (21, 28) is still overlap with (0, 4).
 
-Calculate the number of overlap with other jobs for each job.
-Sort jobs by the number of overlap ascendingly.
+Moreover, we need to define relative starting time. For example, we can say the schedule start from 6 (6 A.M.). When we say this job is end early than another job, we will have a relative starting time in mind. For example, 9 P.M. is earier than 4 A.M. when relative starting time is 8 P.M..
+
+Then we sort all jobs by finish time and using greedy algorithm to solve it.
+
+```
+max {
+  for rst(relative ) from 0 to 23
+    sj <- sort jobs by finish time related to rst
+    A <- empty schedule
+    for j in sj
+      if j is not conficit with jobs in A
+        A <- A U j
+    return A
+}
+```
+
+Now we prove it correctness.
+
+We get the solutions by greedying algorithm is g1, g2, ... gk.
+
+If our solutions is not the optimal, and suppose we have a set of jobs j1, j2, ... jm is a optimal solution with g1 = j1, g2 =j2, ... gi = ji for the largest possible value of i.
+
+However, job gi+1 finish before ji+1 because our algo choose ths job finish first, then we can replace job ji+1 with gi+1, and solution is still feasible and optimal, but contradict "the largest possible value of i".
