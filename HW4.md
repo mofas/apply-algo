@@ -2,7 +2,9 @@
 
 Assume edge e is (u, v).
 
-At first, we remove the edge from the graph G, and use DFS search to see if v can visited from u, which take O(m+n) times.
+We remove the edge from the graph G, and use DFS search to see if v can visited from u.
+If we can reach v from u, then add edge (u, v) back, it certaintly form a cycle.
+This algorithm take O(m+n) times.
 
 ```
 Explore(G, u, target):
@@ -32,13 +34,13 @@ We can categories the possibilities to four situations.
 3.  Visiting v first and then u through edge(u, v)
 4.  Visiting v first and other nodes, then go u without traversing edge(u, v)
 
-For first case, if we visit v after u immediately through edge (u, v), then post(u) > post(v) because we will back from u after finishing exploreing u. We don't need to handle this case.
+For first case, if we visit v after u through edge (u, v), then post(u) > post(v) because we will back from u after finishing exploreing u. We don't need to handle this case because post(u) > post(v).
 
-For second case, if we visit v after u without traversing edge(u, v). then by induction on first case, post(u) > post(x1) > post(x2) .... > post(v). We can get post(u) > post(v). We don't need to handle this case either.
+For second case, if we visit v after u without traversing edge(u, v). Instead, we visit other node x1, x2, ... xn, then to v. By induction on first case, post(u) > post(x1) > post(x2) .... > post(v). We can get post(u) > post(v). We don't need to handle this case either.
 
 For third case, if we visit u after v immediately through edge (u, v), then post(v) > post(u) and clearly u is the ancestor of v.
 
-For fourth case, if we visit u after v without traversing edge(u, v). then by induction on third case, we can get post(v) > post(x1) > post(x2) .... > post(u), and v is ancestor of x1, x1 is ancestor of x2 ..., and xn is ancestor of u. Therefore, we can get conclusion that v is ancestor of u.
+For fourth case, if we visit u after v without traversing edge(u, v). Instead, Instead, we visit other node x1, x2, ... xn, then to u. By induction on third case, we can get post(v) > post(x1) > post(x2) ...> post(xn) > post(u), and v is ancestor of x1, x1 is ancestor of x2 ... and xn is ancestor of u. Therefore, we can get conclusion that v is ancestor of u.
 
 #### 3. The police department in the city of Axeville has made all streets oneway. The mayor contends that there is still a way to drive legally from any intersection in the city to any other intersection, but the opposition is not convinced. (1) Formulate a graph algorithmic problem to check whether this statement is true or not, and devise a linear time algorithm to solve it; (2) Suppose it turns out the mayor’s claim is false. She next claims something weaker: if you start driving from the town hall, then no matter where you reach, there is always a way to drive legally back to the town hall. Formulate this weaker statement, and devise a linear time algorithm to check if it is true or not.
 
@@ -58,15 +60,24 @@ This is a Hamiltonian path problem.
 
 Firstly, Using DFS to sort all vertices in topological order, which takes time O(m+n).
 
-Then we check if all successive vertices in the sort are connected. That is, we have edges (1, 2), (2, 3) (3, 4) ... (n-1, n), where the number is verticts sorted in topological order. If so, then we get a Hamiltonian path, which starting from the source, traversing all vertices in topological order and ending at the sink. This operation take O(n) times.
+Then we check if all successive vertices in the sort are connected. That is, we have edges (1, 2), (2, 3) (3, 4) ... (n-1, n), where the number is vertices sorted by topological order. If so, then we get a Hamiltonian path, which starting from the source, traversing all vertices in topological order and ending at the sink. This operation take O(n) times.
 
 The running time is O(m+n) + O(n)
 
 #### 5. A feedback edge set of an undirected graph G=(V, E) is a subset of edges E’⊆E that intersects every cycle of the graph. Thus, removing the edges in E’ will render the graph acyclic. Give an efficient algorithm for the following problem: Input: Undirected graph G=(V, E) with positive edge weights We Output: A feedback edge set E’⊆E of minimum total weight Σ e∈E’ We
 
-TODO ....
+We know that if we remove all edges in feedback edge set, than the graph will become the spanning tree. If we want to get feedback edge set with min total weight, then it is to say we want to find maximum spanning tree.
 
-This problem can be solved by greeding algorithm.
+We know how to find minimun spanning tree by using greeding algorithm like following code, because spanning tree form a graph matroid. (We proof it on the class, so we skip here)
+
+```
+A <- empty
+sort e ∈ E in increasing order of w for each e ∈ E in the order
+  if A U {e} ∈ l
+    A <- A U {e}
+```
+
+Actually, we can use such algorithm to find maximum spanning tree too. We just reverse the weight wi of edge by w0 - wi, where w0 is larger than than all wi, and run the above algorithm again. Now we start to add the originally largest weight edge into A step by step. Therefore, we can get maximum spanning tree. Then we can diff E with those tree edges and get minimum feedback edge set.
 
 #### 6. Given two arrays of n integers, the all-pair-sum S is defined as the sum of every pair of elements: S = Σi,jaibj, where ai and bj are the integers in the two respective arrays. Given an array of n integers A, we want to find an array of integers B, in which each element bj ∈ {1, -1}, such that the all-pair-sum between A and B is maximized. How to find array B?
 
@@ -85,7 +96,9 @@ However, max { SP , SN } is always the same, so we only compute SP, SN once, and
 
 #### 7. Given two sorted arrays, each containing n integers, A[1..n] and B[1..n], and an integer N, we want to find two numbers a and b in each of these input arrays, respectively, a∈A and b∈B, such that |a-b|=N; if there are no such two numbers, a message “not found” should be output. Here, we want to avoid any additional storage with the size O(n). Devise an algorithm to find the two numbers in O(n) time under this constraint. (Note that you can still use additional constant memory as temporary storage.)
 
-We need to extra memory for index i and j to record current position in array A and B.
+We need to extra memory for index i and j to record current position in array A and B, and we check the difference of B[i] - A[j].
+
+Because both A and B is sorted, we can gradually scan all possibility by increase index i & j based on the difference of B[i] - A[j]. If difference < N, then we increase i; if difference > N, then we increase j.
 
 ```
 i <- 1
@@ -196,7 +209,7 @@ split C' = [ [1, 1, 1] [], []]
 
 Then we know 2 don't appear in all input arrays, so we discard it.
 
-{x > 2} arrays has at least one empty array, we can stop here.
+{x > 2} arrays has at least one empty array, we don't need to handle that.
 
 On {x < 2} recursion
 
@@ -212,7 +225,7 @@ split C'' = [ [], [1, 1, 1] []]
 
 we know 1 appear in all elements.
 
-so the final result is [1, 2]
+so the final result is [1, 3]
 ```
 
 #### 10. In an array of n integers A[1..n], the increasing subsequence is a subsequence of k consecutive elements in the array, A[i], A[i+1], …, A[i+k], such that A[i] ≤ A[i+1] ≤ …≤ A[i+k]. Devise a linear time O(n) algorithm to find the longest increasing subsequence of a given array of n integers.
@@ -241,10 +254,9 @@ for(i = 2 ; i < length(A); i++){
 
 #### 11. The overlap between two intervals i and i' is defined as: if i ∩ i' ≠ ø, that is, if low[i] ≤ low[i'], overlap = max(0, high[i] - low[i’]); if low[i’] ≤ low[i], overlap = max(0, high[i’] - low[i]). Given a set of intervals S and a query interval q, we want to find the interval in S with the greatest overlap with q. Devise a data structure based on binary search tree (BST) to maintain the interval set S (so that they can be inserte/delected, etc), and a search algorithm using the data structure to solve the above problem in O(log n), where n = |S|. You may modify the BST data structure to incorporate additional auxiliary information.
 
-=========== TODO ============
 We sort intervals by low of interval, and we need to store the max of left branch and min of right branch.
 
-Eg
+=========== TODO ============
 
 ```
 [
@@ -267,7 +279,7 @@ goal: [15, 23]
 
 #### 12. Given n integers, and a query integer k, we want to computer how many integers among the n integers are greater than k. Assuming we maintain a binary search tree (BST) of the n integers (so that they can be inserted/deleted, etc), we want to solve the above problem in O(h) time, where h is the height of the BST, and for a balanced BST, h=O(log n). Devise an algorithm in O(h) based on the BST of the n integers. You may modify the BST data structure to incorporate additional auxiliary information.
 
-We just need to maintain the number of children in each node.
+We need to maintain extra info: the number of children in each node.
 
 The insert and delete operations are still the same as BST. The only difference is that, we need to update the children count upward to the root.
 
@@ -399,7 +411,7 @@ Originally, I think we can sort jobs by bi/ti, and using greedy algorithm to sol
       choose highest bi/ti  ji ∪ f(N-ti, jobs / ji)
 ```
 
-However, this problem cannot solve by greedy algorithm because we have time limit.
+However, this is wrong because we have time limit.
 
 For example:
 
@@ -412,7 +424,7 @@ N = 10
 
 Choosing job 2 + job 3 is better than just allocate job 1.
 
-We need to solve this problem by dynamic programming.
+So I think we need to solve this problem by dynamic programming.
 
 ```
 f(N, jobs):
@@ -437,7 +449,7 @@ f(S) :
     return S
 ```
 
-The algorithm is quite straightforward, we invite all people at first. If someone don't fit the constraints, then we kick him/her from invitation list. If there are several people don't qualify those two constraints, than we use recursively check which set that remove pi is the biggest one.
+The algorithm is quite straightforward, we invite all people at first. If someone don't fit the constraints, then we kick him/her off from invitation list. If there are several people don't qualify those two constraints, than we recursively check the subproblem that, which person we remove can get the biggest invitation list.
 
 #### 16. Consider the following variation on the Scheduling Problem. You have a processor that can operate 24 hours a day, every day. People submit requests to run daily jobs on the processor. Each such job comes with a start time and an end time; if the job is accepted to run on the processor, it must run continuously, every day, for the period between its start and end times. Given a list of n such jobs, your goal is to accept as many jobs as possible (regardless of their length), subject to the constraint that the processor can run at most one job at any given point in time. Provide an algorithm to do this with a running time that is polynomial in n. You may assume for simplicity that no two jobs have the same start or end times.
 
