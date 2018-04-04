@@ -77,14 +77,14 @@ sort e ∈ E in increasing order of w for each e ∈ E in the order
     A <- A U {e}
 ```
 
-Actually, we can use such algorithm to find maximum spanning tree too. We just reverse the weight wi of edge by w0 - wi, where w0 is larger than than all wi, and run the above algorithm again. Now we start to add the originally largest weight edge into A step by step. Therefore, we can get maximum spanning tree. Then we can diff E with those tree edges and get minimum feedback edge set.
+Actually, we can use such algorithm to find maximum spanning tree too. We just need to sort edge by decreasing instead of increasing order of w, and run the above algorithm again. Now we start to add the originally largest weight edge into A step by step. Therefore, we can get maximum spanning tree. Then we can diff E with those tree edges and get minimum feedback edge set.
 
 #### 6. Given two arrays of n integers, the all-pair-sum S is defined as the sum of every pair of elements: S = Σi,jaibj, where ai and bj are the integers in the two respective arrays. Given an array of n integers A, we want to find an array of integers B, in which each element bj ∈ {1, -1}, such that the all-pair-sum between A and B is maximized. How to find array B?
 
 Let the f(j) be the max sum of array A and the array B with first j element.
 
-We know there is only two elements { 1 , -1 } in array B,
-and we let SP be the sum of elements in A _ 1 ,and SN be the sum of elements in A _ -1.
+We know there is only two elements { 1 , -1 } in array B.
+Let ai is the element in array A, SP be the sum of `ai * 1`, and SN be the sum of `ai * -1`.
 
 Then we can get the following relation
 
@@ -92,7 +92,7 @@ Then we can get the following relation
 f(j+1) = f(j) + max { SP , SN }
 ```
 
-However, max { SP , SN } is always the same, so we only compute SP, SN once, and based on the result to return array of 1 or array of -1.
+However, max { SP , SN } is always the same, so we only compute SP, SN once, and based on the result to return array of all elements are 1 or array of all elements are -1.
 
 #### 7. Given two sorted arrays, each containing n integers, A[1..n] and B[1..n], and an integer N, we want to find two numbers a and b in each of these input arrays, respectively, a∈A and b∈B, such that |a-b|=N; if there are no such two numbers, a message “not found” should be output. Here, we want to avoid any additional storage with the size O(n). Devise an algorithm to find the two numbers in O(n) time under this constraint. (Note that you can still use additional constant memory as temporary storage.)
 
@@ -254,27 +254,37 @@ for(i = 2 ; i < length(A); i++){
 
 #### 11. The overlap between two intervals i and i' is defined as: if i ∩ i' ≠ ø, that is, if low[i] ≤ low[i'], overlap = max(0, high[i] - low[i’]); if low[i’] ≤ low[i], overlap = max(0, high[i’] - low[i]). Given a set of intervals S and a query interval q, we want to find the interval in S with the greatest overlap with q. Devise a data structure based on binary search tree (BST) to maintain the interval set S (so that they can be inserte/delected, etc), and a search algorithm using the data structure to solve the above problem in O(log n), where n = |S|. You may modify the BST data structure to incorporate additional auxiliary information.
 
-We sort intervals by low of interval, and we need to store the max of left branch and min of right branch.
+We sort intervals by low of interval, and we need to store the max of all children to find the overlapy. In addition, we also need to store the min of all children to find maximum overlap.
 
-=========== TODO ============
+There are four cases for overlapping.
+
+Ths first case overlap, the query node is on the right side of current searching node.
+We need to check if max value is from left branch or right branch. If max from left branch, then we go left. Otherwise, we compare the high[x] - low[i] and high[i] - min[right[x]]. If high[x] - low[i] < high[i] - min[right[x]], then we go right, otherwise we return current node.
 
 ```
-[
-  [0, 3],
-  [5, 8],
-  [6, 10],
-  [8, 9],
-  [15, 23],
-  [16, 21],
-  [17, 19],
-  [19, 20],
-  [25, 30],
-  [26, 26]
-]
+query:          |--------|
+current node |-----|
+```
 
-q : [8, 18]
+Ths second case overlap, the query node is on the left side of current searching node. We need to check if max value is from left branch or right branch. If max from left branch, then we go left. Otherwise, we reutrn current node.
 
-goal: [15, 23]
+```
+query:        |--------|
+current node       |-----|
+```
+
+Ths third case overlap, the query node overshadow the current node. We need to check if max value is from left branch or right branch. If max from left branch, then we go left. Otherwsier, we need to compre high[x] - low[x] and high[i] - min[right[x]]. If high[x] - low[x] < high[i] - min[right[x]], then we go right, otherwise we return current node.
+
+```
+query:        |----------|
+current node     |-----|
+```
+
+Ths fourth case overlap, the query node is overshadowed by current node. We return current node directly.
+
+```
+query:         |--------|
+current node  |------------|
 ```
 
 #### 12. Given n integers, and a query integer k, we want to computer how many integers among the n integers are greater than k. Assuming we maintain a binary search tree (BST) of the n integers (so that they can be inserted/deleted, etc), we want to solve the above problem in O(h) time, where h is the height of the BST, and for a balanced BST, h=O(log n). Devise an algorithm in O(h) based on the BST of the n integers. You may modify the BST data structure to incorporate additional auxiliary information.
