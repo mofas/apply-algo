@@ -64,7 +64,7 @@ void dijkstra(vector<Node> graph[], int n, int source)
   {
     distance[i] = INF;
   }
-  distance[0] = 0;
+  distance[source] = 0;
 
   // Initial Queue
   priority_queue<Node *, vector<Node *>, NodeCompare> PQ;
@@ -144,6 +144,7 @@ int main()
     graph[u1].push_back(t);
   }
 
+  // // Test 2
   // Edge edgeList[5] = {
   //     {0, 1, 1},
   //     {1, 2, 1},
@@ -164,7 +165,7 @@ int main()
   //   graph[u1].push_back(t);
   // }
 
-  // Test 3
+  // // Test 3
   // n = 9;
   // Edge edgeList[14] = {
   //     {0, 1, 4},
