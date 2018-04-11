@@ -9,20 +9,6 @@ typedef struct edge_struct
   int cost;
 } edge;
 
-void printArray(int arr[], int length)
-{
-  printf("[");
-  for (int i = 0; i < length; i++)
-  {
-    printf("%d", arr[i]);
-    if (i < length - 1)
-    {
-      printf(",");
-    }
-  }
-  printf("]\n");
-}
-
 int compare(const void *a, const void *b)
 {
   return (((edge *)a)->cost - ((edge *)b)->cost);
@@ -48,8 +34,6 @@ int findSet(int parent[], int n)
   {
     n = parent[n];
   }
-  // union by rank: we need extra another array to save rank.
-  // path compression
   return n;
 }
 
@@ -59,6 +43,8 @@ void unionSet(int parent[], int u, int v)
 {
   int t = findSet(parent, v);
   parent[t] = u;
+  // union by rank: we need extra another array to save rank.
+  // path compression
 }
 
 // KRUSKAL(G)
@@ -88,6 +74,7 @@ int karskal(edge edgeList[], int parent[], int numEdge, int numNode)
     if (findSet(parent, u) != findSet(parent, v))
     {
       unionSet(parent, u, v);
+      printf("Connect %d %d with cost %d\n", u, v, weight);
       cost += weight;
     }
   }
