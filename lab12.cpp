@@ -93,20 +93,20 @@ void dijkstra(vector<Node> graph[], int n, int source)
         // printf("update edge (%d , %d) with cost %d\n", u, v, distU + costUV);
         distance[v] = distU + costUV;
         // if the vertex already exist, just update its dist value.
-        if (nodeRef[v])
-        {
-          printf("Updte priority: v = %d with cost %d\n", v, distance[v]);
-          (*nodeRef[v]).dist = distance[v];
-        }
-        else
-        {
-          Node *t = new Node;
-          (*t).vertex = v;
-          (*t).dist = distance[v];
-          nodeRef[v] = t;
-          printf("Insert PQ:      v = %d into queue with cost %d\n", v, distance[v]);
-          PQ.push(t);
-        }
+        // if (nodeRef[v])
+        // {
+        //   printf("Updte priority: v = %d with cost %d\n", v, distance[v]);
+        //   (*nodeRef[v]).dist = distance[v];
+        // }
+        // else
+        // {
+        Node *t = new Node;
+        (*t).vertex = v;
+        (*t).dist = distance[v];
+        nodeRef[v] = t;
+        printf("Insert PQ:      v = %d into queue with cost %d\n", v, distance[v]);
+        PQ.push(t);
+        // }
       }
     }
   }
