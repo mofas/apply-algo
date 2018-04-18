@@ -1,7 +1,7 @@
 #### 1. Show how to find the maximum spanning tree of a graph, which is the spanning tree of the largest total weight.
 
 We can simply modify the MST algorithm to solve this problem too.
-For Prim algorithm for example, the only thing we need to change is we add maximum instead of minimum weight edge between V and V - T every iteration. The following is the pesudo code.
+For Prim algorithm for example, the only thing we need to change is we add maximum instead of minimum weight edge between V and V - T in each iteration. The following is the pesudo code.
 
 ```
 for u <- V
