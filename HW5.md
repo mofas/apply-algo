@@ -165,7 +165,7 @@ If we the max flow is n, then we know all patients can be sent to hospitals in t
 
 Building graph will take `n*k` time.
 
-If we use e Edmonds-Karp maximum flow algorithm to solve this problem.
+If we use Ford-Fulkerson maximum flow algorithm to solve this problem.
 
-The time complexity for Edmonds-Karp is `O(v*e^2)`. Here ours v is n + k + 2, and e is O(nk).
-Therefore, the algorithm time complexity is `O(n^3*k^2 + n^2*k^3)`.
+The time complexity for Ford-Fulkerson is `O(Ef)`. Here f is n, and E is O(nk).
+Therefore, the algorithm time complexity is `O(nk^2)`.

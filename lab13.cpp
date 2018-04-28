@@ -38,7 +38,6 @@ void PrintPath(int n, int *intermediate, int u, int v)
   PrintPath(n, intermediate, intUV, v);
 };
 
-// n is the number of nodes,  m is the number of edges.
 void FloydWarshall(vector<Node> graph[], int V, int E)
 {
   int D[V][V];
